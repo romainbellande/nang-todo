@@ -1,0 +1,20 @@
+{
+  "name": "nang-todo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "lerna run test",
+    "lint": "lerna run lint",
+    "bootstrap": "lerna bootstrap",
+    "api:resource": "hygen api resource"
+  },
+  "devDependencies": {
+    "hygen": "^6.0.4",
+    "lerna": "^4.0.0"
+  }
+}

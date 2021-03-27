@@ -1,0 +1,84 @@
+version: '3.2'
+
+services:
+  pg:
+    image: 'postgres:11'
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DATABASES: $POSTGRES_DATABASE
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - 5447:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./docker/postgres/pg-init-scripts:/docker-entrypoint-initdb.d
+
+  traefik:
+    image: "traefik:v2.3"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.useBindPortIP=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.iam.address=:8085"
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "8085:8085"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    depends_on:
+      - server
+      - client
+
+  server:
+    image: node:14-buster
+    user: "node"
+    working_dir: /home/node/packages/server
+    command: "yarn start:dev"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pg/${POSTGRES_DATABASE}"
+      YARN_VERSION: 1.22.5
+      PORT: 9000
+      ENVIRONMENT: "development"
+      CRYPTO_KEY: H9r5s$$3*BgUZ
+      CRYPTO_IV_BASE64: kj4O+MR8Bnm3j+RNcFNCXw==
+    volumes:
+      - ./:/home/node
+      - yarn-dir:/usr/local/share/.config/yarn/global
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`api.nang-todo.localhost`)"
+      - "traefik.http.routers.server.entrypoints=web"
+      - 'traefik.http.services.server.loadbalancer.server.port=9000'
+    depends_on:
+      - pg
+
+  client:
+    image: node:14-buster
+    user: "node"
+    working_dir: /home/node/packages/client
+    command: "yarn start"
+    environment:
+      NODE_ENV: development
+      YARN_VERSION: 1.22.5
+      ENVIRONMENT: "development"
+      API_URL: api.nang-todo.localhost/api/v1
+    volumes:
+      - ./:/home/node
+      - yarn-dir:/usr/local/share/.config/yarn/global
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client.rule=Host(`nang-todo.localhost`)"
+      - "traefik.http.routers.client.entrypoints=web"
+      - 'traefik.http.services.client.loadbalancer.server.port=4200'
+    depends_on:
+      - server
+
+volumes:
+  pg-data:
+  yarn-dir:
