@@ -3,11 +3,11 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Todo } from '@/entities';
+import { Board } from '@/entities';
 
 @Injectable()
-export class TodoService extends TypeOrmCrudService<Todo> {
-  constructor(@InjectRepository(Todo) repo: Repository<Todo>) {
+export class BoardService extends TypeOrmCrudService<Board> {
+  constructor(@InjectRepository(Board) repo: Repository<Board>) {
     super(repo);
   }
 }

@@ -5,9 +5,11 @@ export class Config {
 
   static readonly PORT: number = parseInt(process.env.PORT);
 
-  static readonly CRYPTO_KEY: string = 'H9r5s$3*BgUZ';
+  static readonly CRYPTO_KEY: string = process.env.CRYPTO_KEY;
 
-  static readonly CRYPTO_IV_BASE64: string = 'kj4O+MR8Bnm3j+RNcFNCXw==';
+  static readonly CRYPTO_IV_BASE64: string = process.env.CRYPTO_IV_BASE64;
+
+  static readonly JWT_SECRET: string = process.env.JWT_SECRET;
 
   static readonly CRUD_GLOBAL_CONFIG: CrudGlobalConfig = {
     params: {

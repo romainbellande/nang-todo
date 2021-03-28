@@ -1,27 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TodoController } from './todo.controller';
+import { ListController } from './list.controller';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { TodoService } from './todo.service';
-import { Todo } from '@/entities';
+import { ListService } from './list.service';
+import { List } from '@/entities';
 import { MockRepository } from '@/utils/testing/mock-repository';
 
-describe('Todo Controller', () => {
-  let controller: TodoController;
+describe('List Controller', () => {
+  let controller: ListController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [TodoController],
+      controllers: [ListController],
       providers: [
-        TodoService,
+        ListService,
         {
-          provide: getRepositoryToken(Todo),
+          provide: getRepositoryToken(List),
           useValue: new MockRepository(),
         },
       ],
     }).compile();
 
-    controller = module.get<TodoController>(TodoController);
+    controller = module.get<ListController>(
+      ListController
+    );
   });
 
   it('should be defined', () => {

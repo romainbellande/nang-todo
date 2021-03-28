@@ -47,6 +47,7 @@ services:
       ENVIRONMENT: "development"
       CRYPTO_KEY: H9r5s$$3*BgUZ
       CRYPTO_IV_BASE64: kj4O+MR8Bnm3j+RNcFNCXw==
+      JWT_SECRET: 851fFXbwP&68
     volumes:
       - ./:/home/node
       - yarn-dir:/usr/local/share/.config/yarn/global

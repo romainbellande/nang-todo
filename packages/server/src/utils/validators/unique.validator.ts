@@ -7,6 +7,7 @@ import { encrypt } from '../crypto';
 
 interface ConstraintsOptions {
   encrypted?: boolean;
+  entity?: string;
 }
 
 interface UniqueValidationArguments extends ValidationArguments {
@@ -19,17 +20,22 @@ export abstract class UniqueValidator implements ValidatorConstraintInterface {
   ) {}
 
   public async validate(value: string, args: UniqueValidationArguments) {
-    const { encrypted } = args.constraints[0];
+    const { encrypted, entity } = args.constraints[0];
 
-    const count = await this.connection.getRepository(args.targetName).count({
-      where: {
-        [args.property]: encrypted ? await encrypt(value) : value,
-      },
-    });
+    const count = await this.connection
+      .getRepository(entity || args.targetName)
+      .count({
+        where: {
+          [args.property]: encrypted ? await encrypt(value) : value,
+        },
+      });
     return count <= 0;
   }
 
   public defaultMessage(args: ValidationArguments) {
-    return `${args.targetName} with the same '${args.property}' already exist`;
+    const { entity } = args.constraints[0];
+    return `${entity || args.targetName} with the same '${
+      args.property
+    }' already exist`;
   }
 }

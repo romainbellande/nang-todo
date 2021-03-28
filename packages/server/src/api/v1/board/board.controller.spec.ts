@@ -1,28 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BoardController } from './board.controller';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Todo } from '@/entities';
+import { BoardService } from './board.service';
+import { Board } from '@/entities';
 import { MockRepository } from '@/utils/testing/mock-repository';
-import { TodoService } from './todo.service';
 
-describe('TodoService', () => {
-  let service: TodoService;
+describe('Board Controller', () => {
+  let controller: BoardController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      controllers: [BoardController],
       providers: [
-        TodoService,
+        BoardService,
         {
-          provide: getRepositoryToken(Todo),
+          provide: getRepositoryToken(Board),
           useValue: new MockRepository(),
         },
       ],
     }).compile();
 
-    service = module.get<TodoService>(TodoService);
+    controller = module.get<BoardController>(
+      BoardController
+    );
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(controller).toBeDefined();
   });
 });

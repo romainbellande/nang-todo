@@ -21,6 +21,7 @@ async function bootstrap() {
   const swaggerOptions = new DocumentBuilder()
     .setTitle('Todos API')
     .setVersion('1.0')
+    .addBearerAuth({ type: 'apiKey', in: 'header', name: 'Authorization' })
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerOptions);
